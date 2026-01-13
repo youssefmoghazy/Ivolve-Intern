@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group = 'com.ivolve'
+version = '1.0'
+
+// 1. New way to set Java version
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+// 2. New way to define the main class for the application plugin
+application {
+    mainClass = 'com.ivolve.App'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Note: JUnit 4 is quite old; consider switching to JUnit 5 (jupiter) later
+    testImplementation 'junit:junit:4.13.2'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Main-Class': 'com.ivolve.App'
+        )
+    }
+    // Using .set() is the correct modern Gradle (Lazy Configuration) approach
+    archiveBaseName.set("ivolve-app")
+    archiveVersion.set("")
+    archiveClassifier.set("")
+}
