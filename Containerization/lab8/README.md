@@ -64,7 +64,7 @@ CMD ["python", "app.py"]
 
 ---
 
-## 🏗️ Step 3: Build Docker Images
+##  Step 3: Build Docker Images
 
 From the project root directory:
 
@@ -81,7 +81,7 @@ docker images
 
 ---
 
-## 🌐 Step 4 : Create a Custom Docker Network
+##  Step 4 : Create a Custom Docker Network
 
 Create a bridge network:
 
@@ -97,7 +97,7 @@ docker network ls
 
 ---
 
-## ▶️ Step 5: Run Containers on the Custom Network
+##  Step 5: Run Containers on the Custom Network
 
 ### Run Backend Container
 
@@ -120,7 +120,7 @@ docker run -d \
 
 ---
 
-## 🔍 Step 6: Test Container Communication
+##  Step 6: Test Container Communication
 
 Open a browser or use `curl`:
 
@@ -142,7 +142,7 @@ This confirms that:
 
 ---
 
-## 🧪 Step 7: Inspect the Network (Optional)
+##  Step 7: Inspect the Network (Optional)
 
 ```bash
 docker network inspect microservices-net
@@ -152,7 +152,7 @@ This shows connected containers and assigned IP addresses.
 
 ---
 
-## 🧹 Step 8: Clean Up
+##  Step 8: Clean Up
 
 Stop and remove containers:
 
