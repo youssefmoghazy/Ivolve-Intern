@@ -1,0 +1,94 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nodejs-app
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: nodejs-app
+  template:
+    metadata:
+      labels:
+        app: nodejs-app
+    spec:
+      tolerations:
+        - key: "node"
+          operator: "Equal"
+          value: "worker"
+          effect: "NoSchedule"
+      initContainers:
+        - name: init-mysql
+          image: mysql:5.7
+          env:
+            # from ConfigMap
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_HOST
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_USER
+
+            # from Secret
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: DB_PASSWORD
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: MYSQL_ROOT_PASSWORD
+
+          command:
+            - sh
+            - -c
+            - |
+              until mysql -h $DB_HOST -u root -p$MYSQL_ROOT_PASSWORD -e "SELECT 1"; do
+                sleep 5
+              done
+
+              echo "Creating database and user..."
+              mysql -h $DB_HOST -u root -p$MYSQL_ROOT_PASSWORD <<EOF
+              CREATE DATABASE IF NOT EXISTS ivolve;
+              CREATE USER IF NOT EXISTS '$DB_USER'@'%' IDENTIFIED BY '$DB_PASSWORD';
+              GRANT ALL PRIVILEGES ON ivolve.* TO '$DB_USER'@'%';
+              FLUSH PRIVILEGES;
+              EOF
+      containers:
+        - name: nodejs-app
+          image: youssefmoghazy/nodejs-app-lab9
+          ports:
+            - containerPort: 3000
+          env:
+            # from ConfigMap
+            - name: DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_HOST
+            - name: DB_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: DB_USER
+
+            # from Secret
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-credentials
+                  key: DB_PASSWORD
+
+          volumeMounts:
+            - name: nodejs-storage
+              mountPath: /usr/src/app/data
+      volumes:
+        - name: nodejs-storage
+          persistentVolumeClaim:
+            claimName: nodejs-pvc
