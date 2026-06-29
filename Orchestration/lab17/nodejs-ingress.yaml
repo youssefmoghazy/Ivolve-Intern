@@ -1,16 +1,16 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: nodejs-ingress
+  name: minimal-ingress
 spec:
   rules:
-    - host: nodejs.local
+    - host: ndodejs.local
       http:
         paths:
-          - path: /
+          - path:
             pathType: Prefix
             backend:
               service:
-                name: nodejs-service
+                name: test
                 port:
                   number: 80
